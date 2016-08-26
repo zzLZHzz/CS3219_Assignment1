@@ -1,9 +1,14 @@
 import PipeAndFilter.*;
+import EventBasedImplicitInvocation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
 
+        System.out.println("Architecture 1");
         Data data = new Data();
         data.addIgnoreWord("is");
         data.addIgnoreWord("the");
@@ -31,5 +36,32 @@ public class Main {
         cf.addPipe(s);
 
         p.start(data);
+
+        System.out.println("Architecture 2");
+        List<String> ignoredWords = new ArrayList<String>() {{
+            add("hi");
+            add("is");
+            add("the");
+            add("of");
+            add("and");
+            add("as");
+            add("a");
+            add("after");
+        }};
+        List<String> sentences = new ArrayList<String>() {{
+            add("The Day after Tomorrow");
+            add("Fast and Furious");
+            add("Man of Steel");
+        }};
+        KWIC kwic = new KWIC();
+        kwic.doWorkOnCompletion(new OnCompleteListener() {
+            public void onComplete(KWICResult result) {
+                //display
+                for(String s : result.results){
+                    System.out.println(s);
+                }
+            }
+        });
+        kwic.doWork(sentences, ignoredWords);
     }
 }
