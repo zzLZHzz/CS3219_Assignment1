@@ -10,6 +10,5 @@ public class Sink implements Pipe {
         for(String s : data.inputs){
             System.out.println(s);
         }
-        System.out.println("Done");
     }
 }

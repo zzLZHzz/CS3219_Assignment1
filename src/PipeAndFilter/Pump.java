@@ -14,8 +14,6 @@ public class Pump {
     }
 
     public void start(Data data){
-        System.out.println("Pump started");
-
         // Notify completion
         for (Pipe hl : listeners)
             hl.onComplete(data);
