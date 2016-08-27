@@ -1,6 +1,13 @@
 import PipeAndFilter.*;
 import EventBasedImplicitInvocation.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,20 +15,42 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Architecture 1");
-        Data data = new Data();
-        data.addIgnoreWord("is");
-        data.addIgnoreWord("the");
-        data.addIgnoreWord("of");
-        data.addIgnoreWord("and");
-        data.addIgnoreWord("as");
-        data.addIgnoreWord("a");
-        data.addIgnoreWord("after");
-        data.addInput("The Day after Tomorrow");
-        data.addInput("Fast and Furious");
-        data.addInput("Man of Steel");
+        String inputLocation, ignoreLocation;
+        if (args.length == 2){
+            inputLocation = args[0];
+            ignoreLocation =  args[1];
+        }else{
+            inputLocation = "input.txt";
+            ignoreLocation =  "ignore.txt";
+        }
 
-	    //Pipe & Filter logic
+        List<String> sentences = new ArrayList<String>();
+        try(BufferedReader br = new BufferedReader(new FileReader(inputLocation))) {
+            String line = br.readLine();
+
+            while (line != null) {
+                sentences.add(line);
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+        }
+
+        List<String> ignoredWords = new ArrayList<String>();
+        try(BufferedReader br = new BufferedReader(new FileReader(ignoreLocation))) {
+            String line = br.readLine();
+
+            while (line != null) {
+                ignoredWords.add(line);
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+        }
+
+
+        //Architecture 1
+        Data data = new Data();
+        data.inputs = sentences;
+        data.ignoreList = ignoredWords;
         Pump p = new Pump();
         CircularShiftFilter csf = new CircularShiftFilter();
         IgnoredWordsFilter iwf = new IgnoredWordsFilter();
@@ -37,29 +66,19 @@ public class Main {
 
         p.start(data);
 
-        System.out.println("Architecture 2");
-        List<String> ignoredWords = new ArrayList<String>() {{
-            add("hi");
-            add("is");
-            add("the");
-            add("of");
-            add("and");
-            add("as");
-            add("a");
-            add("after");
-        }};
-        List<String> sentences = new ArrayList<String>() {{
-            add("The Day after Tomorrow");
-            add("Fast and Furious");
-            add("Man of Steel");
-        }};
+        //Architecture 2
         KWIC kwic = new KWIC();
         kwic.doWorkOnCompletion(new OnCompleteListener() {
             public void onComplete(KWICResult result) {
-                //display
-                for(String s : result.results){
-                    System.out.println(s);
+                Path file = Paths.get("output2.txt");
+                try {
+                    Files.write(file, result.results, Charset.forName("UTF-8"));
+                } catch (IOException e) {
                 }
+                //display
+                //for(String s : result.results){
+                    //System.out.println(s);
+                //}
             }
         });
         kwic.doWork(sentences, ignoredWords);
