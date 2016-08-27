@@ -1,6 +1,5 @@
 package EventBasedImplicitInvocation;
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.event.EventListenerList;
@@ -20,7 +19,7 @@ public class KWIC {
 
         for(String s : inputs) {
             List<String> sOutput = new ArrayList<>();
-            shiftAndCap(s, sOutput);
+            shift(s, sOutput);
             processSentence(sOutput, ignoreList);
             output.addAll(sOutput);
         }
@@ -32,7 +31,7 @@ public class KWIC {
         triggerOnCompleteListener(result);
     }
 
-    public void shiftAndCap(String s, List<String> output){
+    public void shift(String s, List<String> output){
         String[] word = s.split("\\s+");
 
         for (String w : word) {
@@ -42,7 +41,6 @@ public class KWIC {
             String toShift = s.substring(0,index);
             s = s.substring(index + 1);
             s = s + " " + toShift;
-            s = s.substring(0, 1).toUpperCase() + s.substring(1);
         }
     }
 
@@ -63,6 +61,8 @@ public class KWIC {
             String s = i.next(); // must be called before you can call i.remove()
             if (isIgnoredWord(extractFirstWord(s),ignoredList)){
                 i.remove();
+            }else{
+                s = s.substring(0, 1).toUpperCase() + s.substring(1);
             }
         }
     }
