@@ -10,7 +10,7 @@ public class KWIC {
     public void doWorkOnCompletion(OnCompleteListener listener) {
         listenerList.add(OnCompleteListener.class, listener);
     }
-    public void removeOnCompleteListener(OnCompleteListener listener) {
+    public void removeDoWorkOnCompletion(OnCompleteListener listener) {
         listenerList.remove(OnCompleteListener.class, listener);
     }
 
